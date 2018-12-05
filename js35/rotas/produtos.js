@@ -1,36 +1,30 @@
-module.exports = function(app){
-    const connectionFactory = require('../infra/ConnectionFactory')
-    const produtosDAO = require('../infra/ProdutosDAO')
+const produtosDAO = require('../infra/ProdutosDAO')
 
+module.exports = function(app){
     app.get('/produtos', function(request, response) {
-        const connection = connectionFactory();
-        
+        console.log('1')
         produtosDAO.pegaTodosOsLivros(function(livros){
+            console.log('2')
             const produtos = livros; 
-            response.render('produtos', {
+            response.render('produtos/lista', {
                 produtosQueVemDaControler:produtos
             })
-        })
-        
-//        connection.query('SELECT * FROM livros', function(errs, results){            
-//           const produtos = results; 
-//            response.render('produtos', {
-//                produtosQueVemDaControler:produtos
-//            })
-//        });
-        connection.end();
+        })        
     })
 
+    app.get('/produtos/form', function(request, response){
+        response.render('produtos/form')
+    });
+
+    app.post('/produtos', function(request, response){
+        console.log('body-parser: ',request.body)
+        response.send('tentou cadastrar um produto ne?')
+    });
+
     app.get('/produto/:id', function(request, response) {
-        const id = request.params.id
-        
-        const connection = connectionFactory();
-        connection.query(`SELECT * FROM livros WHERE id=${id}`, function(errs, results){            
-            const produtos = results; 
-            response.render('produtos', {
-                produtosQueVemDaControler:produtos
-            })
+        const idDoLivro = request.params.id
+        produtosDAO.pegaUmLivroPorId(idDoLivro, function(livro){
+            response.send(livro)
         });
-        connection.end();
     })
 }
