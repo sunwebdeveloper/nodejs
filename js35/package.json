@@ -6,7 +6,9 @@
   "dependencies": {
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "nodemon": "^1.18.7"
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.7",
+    "properties-reader": "0.0.16"
   },
   "devDependencies": {},
   "scripts": {
