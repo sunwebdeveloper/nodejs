@@ -1,26 +1,37 @@
 const connectionFactory = require('./ConnectionFactory')
 
-function pegaTodosOsLivros(callback){
-    console.log('3')
-    const connection = connectionFactory();
-    connection.query('SELECT * FROM livros', function(errs, results){            
-        console.log('4')
-        connection.end();
-        const produtos = results;
-        callback(produtos);
-    });
+class ProdutosDAO{    
+    constructor(){
+        this.connection = connectionFactory();
+    }
+
+    pegaTodosOsLivros(callback){
+        this.connection.query('SELECT * FROM livros', (errs, results) => {            
+            this.connection.end();
+            const produtos = results;
+            callback(produtos);
+        });
+    }
+
+    pegaUmLivroPorId(idDoLivro, callback){
+        this.connection.query(`SELECT * FROM livros WHERE id=${idDoLivro}`, (errs, results) =>{   
+            this.connection.end(); 
+            const livro = results; 
+            callback(livro)
+        })
+    }
+    
+    gravaUmNovoLivro(livro){
+        return new Promise((resolve, reject)=>{
+            this.connection.query(`
+                INSERT INTO livros (titulo,preco,descricao) values 
+                ('${livro.titulo}', ${livro.preco}, '${livro.descricao}')        
+            `, (errs, results)=>{
+                this.connection.end()
+                resolve(results.insertId) 
+            })        
+        })    
+    }
 }
 
-function pegaUmLivroPorId(idDoLivro, callback){
-    const connection = connectionFactory();
-    connection.query(`SELECT * FROM livros WHERE id=${idDoLivro}`, function(errs, results){   
-        connection.end();
-        const livro = results;
-        callback(livro)
-    })
-}
-
-module.exports = {
-    pegaTodosOsLivros:pegaTodosOsLivros,
-    pegaUmLivroPorId
-}
+module.exports = ProdutosDAO
