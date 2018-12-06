@@ -16,15 +16,35 @@ module.exports = function(app){
     });
 
     app.post('/produto', function(request, response){
-        const novoLivro = request.body;
+        const Joi = require('joi')
+        const livroSchema = Joi.object().keys({
+            titulo: Joi.string().required(),
+            preco: Joi.number().required(),
+            descricao: Joi.string(),
+        })
 
-        const produtosDAO = new ProdutosDAO()
-        produtosDAO.
-            gravaUmNovoLivro(novoLivro)
-            .then(function(idDoNovoLivro){
-                response.redirect('/produtos')
-            })
-    });
+        Joi.validate(request.body, livroSchema, {abortEarly: false})
+        .then((valor)=>{
+            const Livro = {
+                titulo : request.body.titulo,
+                preco : request.body.preco,
+                descricao : request.body.descricao,
+            }
+
+            const produtosDAO = new ProdutosDAO()
+            produtosDAO.
+                gravaUmNovoLivro(Livro)
+                .then(function(idDoNovoLivro){
+                    response.redirect('/produtos')
+                })
+        })
+        .catch((error) => {
+            response.render('produtos/form', {
+                errors: error.details
+            })           
+        }) 
+    })
+
 
     app.get('/produto/:id', function(request, response) {
         const idDoLivro = request.params.id
