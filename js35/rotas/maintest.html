@@ -1,0 +1,24 @@
+<ul>
+    <li>Carregando</li>
+</ul>
+
+<script>    
+setInterval(()=>{
+    fetch('http://localhost:3000/produtos', {
+        headers: {
+            'Accept':'application/json'
+        }
+    })
+    .then(async(response)=>{ //ES7        
+        const resultado = await response.json()
+        
+        const listaEmHtml = resultado.livros.map((livro)=>{
+            return `<li>${livro.titulo}</li>`
+        })
+        .join('')    
+
+        document.querySelector('ul').innerHTML = listaEmHtml
+    })
+},1000)
+    
+</script>

@@ -2,12 +2,23 @@ const ProdutosDAO = require('../infra/ProdutosDAO')
 
 module.exports = function(app){
     app.get('/produtos', function(request, response) {
+        response.setHeader('Access-Control-Allow-Origin','*')
+
         const produtosDAO = new ProdutosDAO()
         produtosDAO.pegaTodosOsLivros(function(livros){
             const produtos = livros; 
-            response.render('produtos/lista', {
-                produtosQueVemDaControler:produtos
-            })
+            response.format({
+                html: function(){
+                    response.render('produtos/lista', {
+                        produtosQueVemDaControler:produtos
+                    })
+                },
+                json: function(){
+                    response.send({
+                        livros:produtos
+                    })
+                }
+            })            
         })        
     })
 
@@ -39,9 +50,18 @@ module.exports = function(app){
                 })
         })
         .catch((error) => {
-            response.render('produtos/form', {
-                errors: error.details
-            })           
+            response.status(400);
+            response.format({
+                html: () => {
+                    response.render('produtos/form', {errors: error.details})  
+                },
+                json: () => {
+                    response.send({
+                        message: 'Erro ao inserir produto'
+                    })
+                }
+            })
+                    
         }) 
     })
 
@@ -51,7 +71,18 @@ module.exports = function(app){
         
         const produtosDAO = new ProdutosDAO()
         produtosDAO.pegaUmLivroPorId(idDoLivro, function(livro){
-            response.send(livro)
-        });
+            const livroPesquisado = livro
+            console.log("pesquisa: "+livroPesquisado)
+            response.format({
+                html: function(){
+                    response.send(`Livro ${livroPesquisado.titulo} localizado com sucesso.`)
+                },
+                json: function(){
+                    response.send({
+                        livro:livroPesquisado
+                    })
+                }
+            })
+        })
     })
 }
