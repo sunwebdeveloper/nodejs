@@ -1,1 +1,8 @@
-dontpad up
+<script src="socket.io/socket.io.js"></script>
+<script>
+    var socket = io()
+    socket.emit('CLIENT_NOVAMENSAGEM','test')
+    socket.on('CLIENT_NOVAMENSAGEM',(dadoDoServer)=>{
+        console.log('dadosDoServer', dadoDoServer)
+    })
+</script>
