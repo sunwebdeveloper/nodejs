@@ -3,7 +3,7 @@
 </ul>
 
 <script>    
-setInterval(()=>{
+/* setInterval(()=>{
     fetch('http://localhost:3000/produtos', {
         headers: {
             'Accept':'application/json'
@@ -20,5 +20,18 @@ setInterval(()=>{
         document.querySelector('ul').innerHTML = listaEmHtml
     })
 },1000)
-    
+ */
+fetch('http://localhost:3000/produtos', {
+	method: 'POST',
+	headers: {
+    	'Accept':'application/json',
+		'Content-type': 'application.json'
+	},
+	body: JSON.stringify({
+		"titulo":"teste cors browser",
+        "preco":10,
+		"descricao":"bla bla bla"
+    })
+})
+
 </script>
